@@ -1,0 +1,10 @@
+{
+  "onboarding": "{name, select, onBoardingTitle1{There is always a place to explore} onBoardingSubTitle1{With Excursion, you will find the best places in Colombia with their details} onBoardingTitle2{Colombia} onBoardingSubTitle2{A country full of wonders} onBoardingTitle3{Free} onBoardingSubTitle3{Excursion is a completely free app. Pack your bags and start exploring!} other{}}",
+  "login": "{name, select, email{email} password{password} login{login} username{Username} userLogin{User is successfully signed in with Google} someError{Some error occurred} loginGoogle{Sign in with Google} dontHaveAcc{Don't have an account?} signUp{signUp}   other{}}",
+  "signUp":"{name, select,  alHaveAcc{Already have an account?} username{Username} other{}}",
+  "home": "{name, select, welcome{Welcome} other{}}",
+  "nav_bar": "{name, select, profile{Perfil} search{Search} home{Home} other{}}",
+  "card_firestore": "{name, select, department{Department} location{Location} name{Name} average{Average} total{Total ratings} submit{Submit} totalRatings{Total} submitComment{Submit Comment} rating{rating} weather{Weather}  addComment{Write a comment}  description{Description} other{}}",
+  "search": "{name, select, searchTitle1{Search by name or department} notFound{no places found}  profileTitle1{Profile} dob{Date of birth} save{Save profile}  other{}}"
+
+}

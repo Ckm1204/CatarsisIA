@@ -1,0 +1,10 @@
+{
+  "onboarding": "{name, select, onBoardingTitle1{Un lugar seguro para tus emociones} onBoardingSubTitle1{Con Excursion encontrarás los mejores lugares de Colombia con sus detalles } onBoardingTitle2{Colombia} onBoardingSubTitle2{Un pais lleno de maravillas} onBoardingTitle3{Gratis} onBoardingSubTitle3{Excursion es una app totalmente gratuita, ! Prepara tus maletas y comienza a explorar ¡} other{}}",
+  "login": "{name, select, email{correo electrónico} password{contraseña} login{iniciar sesión}  username{Nombre de usuario} userLogin{Usuario inicio sesion  correctamente con Google } someError{Algo salió mal} otherError{Ocurrió un error inesperado} other{Ocurrió un error inesperado} loginGoogle {Iniciar sesión con Google} dontHaveAcc{ ¿No tienes una cuenta?} signUp{Regístrate} other{} }",
+  "signUp": "{ name, select, alHaveAcc{¿ Ya tienes una cuenta ?} username{Nombre de usuario} other{}}",
+  "home": "{name, select, welcome{Bienvenido} other{}}",
+  "nav_bar": "{name, select, home{Inicio} profile{Perfil} search{Buscar} other{}}",
+  "card_firestore": "{name, select, department{Departamento} name{Nombre} location{Ubicación} average{Promedio} total{Total puntuaciones} addComment{Escribe un comentario} submitComment{Enviar comentario} submit{Enviar puntaje} totalRatings{Total} rating{Puntación} weather{Clima}  description{Descripción} other{}}",
+  "search": "{name, select, searchTitle1{Buscar por nombre o departamento} notFound{No se encontraron lugares} profileTitle1{Perfil} dob{Fecha de cumpleaños} save{guardar perfil}  other{}}"
+
+}

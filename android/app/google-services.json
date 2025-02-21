@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "786505592510",
+    "project_id": "catarsisia",
+    "storage_bucket": "catarsisia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786505592510:android:7a304eb31d35779e1878ef",
+        "android_client_info": {
+          "package_name": "com.ckm.app_catarsis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "786505592510-tisc29jvc67il9ahlkl1dln3gfi8dql8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbemHvV5YYb6V2SHm71DzlNOCVwYNAY4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "786505592510-tisc29jvc67il9ahlkl1dln3gfi8dql8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "786505592510-2f6u8msfmeus2n9vdqdpbinfsnc0n0h3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ckm.appCatarsis"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
