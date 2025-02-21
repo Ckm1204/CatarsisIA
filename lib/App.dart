@@ -15,7 +15,9 @@ class App extends StatelessWidget {
         themeMode: ThemeMode.system,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        home:  OnBoardingScreen(),
+        // Mostrar pantalla de de carga circular mientras autentication repository es decide mostrar la pantalla relevante
+        home: const Scaffold(backgroundColor: Colors.blue, body: Center(child: CircularProgressIndicator(color: Colors.white))),
+        // home:  OnBoardingScreen(),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('es', ''), // TODO: put here status management

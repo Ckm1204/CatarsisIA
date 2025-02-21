@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class OnBoardingController extends GetxController {
   static OnBoardingController get instance => Get.find();
@@ -17,6 +18,8 @@ class OnBoardingController extends GetxController {
 
   void nextPage(BuildContext context) {
     if (currentPageIndex.value == 2) {
+      final storage = GetStorage();
+      storage.write("isFirstTime", true);
       Navigator.pushNamed(context, "/login");
     } else {
       int page = currentPageIndex.value + 1;
