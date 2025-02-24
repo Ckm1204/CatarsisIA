@@ -15,13 +15,14 @@ void main() async {
   /// Todo: Add widgets binding
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   /// Todo: Init Local Storage
+
   /// Todo: Await native splash
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   /// Getx Storage
    await GetStorage.init();
   /// Initialize Firebase
   await Firebase.initializeApp( options: DefaultFirebaseOptions.currentPlatform).then(
-      (FirebaseApp value) => Get.put(AuthencationRepository()),);
+      (FirebaseApp value) => Get.put(AuthenticationRepository()),);
 
 
 

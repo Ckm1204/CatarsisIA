@@ -11,6 +11,19 @@ class DeviceUtils {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
+  static Orientation getDeviceOrientation(BuildContext context) {
+    return MediaQuery.of(context).orientation;
+  }
+
+  static bool isDarkMode(BuildContext context) {
+    return MediaQuery.of(context).platformBrightness == Brightness.dark;
+  }
+
+  static Locale getDeviceLocale(BuildContext context) {
+    return Localizations.localeOf(context);
+  }
+
+
   static Future<void> setStatusBarColor(Color color) async {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: color),
@@ -61,6 +74,9 @@ class DeviceUtils {
     final viewInsets = View.of(Get.context!).viewInsets;
     return viewInsets.bottom;
   }
+
+
+
 
   static Future<bool> isKeyboardVisible() async {
     final viewInsets = View.of(Get.context!).viewInsets;
