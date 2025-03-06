@@ -1,3 +1,4 @@
+import 'package:app_catarsis/utils/conection_red/no_connection_screen.dart';
 import 'package:app_catarsis/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -18,6 +19,7 @@ class App extends StatelessWidget {
         // Mostrar pantalla de de carga circular mientras autentication repository es decide mostrar la pantalla relevante
         home: const Scaffold(backgroundColor: Colors.blue, body: Center(child: CircularProgressIndicator(color: Colors.white))),
         // home:  OnBoardingScreen(),
+
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('es', ''), // TODO: put here status management
