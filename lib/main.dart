@@ -1,21 +1,22 @@
+import 'package:app_catarsis/utils/conection_red/connectivity_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-  import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-  import 'data/repositories/authentication/authentication_repository.dart';
+import 'data/repositories/authentication/authentication_repository.dart';
 import 'firebase_options.dart';
-  import 'App.dart';
+import 'App.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
+
   /// Todo: Add widgets binding
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  /// Todo: Init Local Storage
-
+  /// Todo: no connection screen
+  Get.put(ConnectivityService());
   /// Todo: Await native splash
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   /// Getx Storage
@@ -28,6 +29,6 @@ void main() async {
 
   /// Todo: Initialize Authentication
 
-  runApp(const App());
+  runApp( App());
 }
 

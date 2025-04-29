@@ -30,13 +30,13 @@ class AppText {
   static String signUp = AppLocalizations.of(Get.context!).login('signUp');
   static String alHaveAcc = AppLocalizations.of(Get.context!).login('alHaveAcc');
   static String username = AppLocalizations.of(Get.context!).login('username');
-
+  static String welcome = AppLocalizations.of(Get.context!).login('welcome');
 // Nav Bar
 
 static String home = AppLocalizations.of(Get.context!).nav_bar('home');
 static String search = AppLocalizations.of(Get.context!).nav_bar('search');
 static String profile = AppLocalizations.of(Get.context!).nav_bar('profile');
-
+static String settings = AppLocalizations.of(Get.context!).nav_bar('data');
 // CardFirestore
 static String name = AppLocalizations.of(Get.context!).card_firestore('name');
 static String department = AppLocalizations.of(Get.context!).card_firestore('department');

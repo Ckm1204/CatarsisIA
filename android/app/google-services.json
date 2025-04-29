@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "786505592510-pqlju8i1midprr0i0f9tot7bp0pge1cm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ckm.app_catarsis",
+            "certificate_hash": "d5491bb94f1cda85c25ab986f7959f2f552733b0"
+          }
+        },
+        {
           "client_id": "786505592510-tisc29jvc67il9ahlkl1dln3gfi8dql8.apps.googleusercontent.com",
           "client_type": 3
         }
