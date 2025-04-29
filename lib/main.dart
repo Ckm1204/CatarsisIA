@@ -29,6 +29,6 @@ void main() async {
 
   /// Todo: Initialize Authentication
 
-  runApp(const App());
+  runApp( App());
 }
 

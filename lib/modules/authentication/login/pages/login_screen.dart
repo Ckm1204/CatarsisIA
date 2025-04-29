@@ -1,8 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app_catarsis/utils/constants/image_strings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app_catarsis/utils/services/auth_service/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import '../../../../utils/helpers/helper_functions.dart';
 import 'signup_screen.dart';
 import '../widgets/form_container.dart';
 import 'package:app_catarsis/utils/constants/text_strings.dart';
@@ -11,10 +14,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:app_catarsis/utils/helpers/toast.dart';
 import 'package:app_catarsis/utils/constants/colors.dart';
 import 'package:app_catarsis/utils/constants/sizes.dart';
-//import 'package:app_catarsis/modules/home/home_page.dart';
-
-
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -40,24 +39,29 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('app_catarsis', style: TextStyle(color: AppColors.textPrimary)),
-        backgroundColor: AppColors.primary,
-      ),
-      body: Center(
+        body: SafeArea(
+            child: SingleChildScrollView(
+      child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height: AppSizes.md),
+              Image(
+                width: HelperFunctions.screenWidth() * 0.6,
+                height: HelperFunctions.screenHeight() * 0.3,
+                image: AssetImage(AppImage.logo),
+                fit: BoxFit.contain,
+              ),
               Text(
                 AppText.login,
-                style: TextStyle(fontSize: AppSizes.fontSizeLg, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                style: TextStyle(
+                    fontSize: AppSizes.fontSizeLg,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary),
               ),
-              SizedBox(
-                height: AppSizes.md
-              ),
+              SizedBox(height: AppSizes.md),
               FormContainerWidget(
                 controller: _emailController,
                 hintText: AppText.email,
@@ -86,22 +90,26 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: _isSigning ? CircularProgressIndicator(
-                      color: Colors.white,) : Text(
-                      AppText.login,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isSigning
+                        ? CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Text(
+                            AppText.login,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               GestureDetector(
                 onTap: () {
                   _signInWithGoogle();
-
                 },
                 child: Container(
                   width: double.infinity,
@@ -114,8 +122,13 @@ class _LoginPageState extends State<LoginPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(FontAwesomeIcons.google, color: Colors.white,),
-                        SizedBox(width: 10,),
+                        Icon(
+                          FontAwesomeIcons.google,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Text(
                           AppText.loginGoogle, // "Sign in with Google"
                           style: TextStyle(
@@ -128,12 +141,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-
-
               SizedBox(
                 height: 20,
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -146,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => SignUpPage()),
-                            (route) => false,
+                        (route) => false,
                       );
                     },
                     child: Text(
@@ -163,60 +173,51 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
+    )));
   }
 
   void _signIn() async {
     setState(() {
       _isSigning = true;
     });
-
-    String email = _emailController.text;
-    String password = _passwordController.text;
-
-    User? user = await _auth.signInWithEmailAndPassword(email, password);
-
-    setState(() {
-      _isSigning = false;
-    });
-
-    if (user != null) {
-      showToast(message: "User is successfully signed in");
-      Navigator.pushNamed(context, "/home");
-
-    } else {
-      showToast(message: "some error occured");
+  
+    try {
+      String email = _emailController.text;
+      String password = _passwordController.text;
+  
+      User? user = await _auth.signInWithEmailAndPassword(email, password);
+  
+      if (user != null) {
+        showToast(message: "User is successfully signed in");
+        Get.toNamed('/home');
+      }
+    } catch (e) {
+      showToast(message: "Authentication failed: ${e.toString()}");} finally {
+      setState(() {
+        _isSigning = false;
+      });
     }
   }
-
-
-  _signInWithGoogle()async{
-
+  
+  _signInWithGoogle() async {
     final GoogleSignIn _googleSignIn = GoogleSignIn();
-
+  
     try {
-
       final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
-
-      if(googleSignInAccount != null ){
-        final GoogleSignInAuthentication googleSignInAuthentication = await
-        googleSignInAccount.authentication;
-
+  
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+  
         final AuthCredential credential = GoogleAuthProvider.credential(
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken,
         );
         await _firebaseAuth.signInWithCredential(credential);
-        Navigator.pushNamed(context, "/home");
+        Get.toNamed('/home');
       }
-
-    }catch(e) {
-      showToast(message: "some error occured $e");
+    } catch (e) {
+      showToast(message: "Google Sign-In failed: ${e.toString()}");
     }
-
-
   }
-
-
 }
-

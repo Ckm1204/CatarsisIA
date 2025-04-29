@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app_catarsis/utils/services/auth_service/firebase_auth.dart';
+import '../../../../utils/constants/image_strings.dart';
+import '../../../../utils/helpers/helper_functions.dart';
 import 'login_screen.dart';
 import '../widgets/form_container.dart';
 import 'package:app_catarsis/utils/helpers/toast.dart';
@@ -37,16 +39,25 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+
+        appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(AppText.signUp, style: TextStyle(color: AppColors.textPrimary)),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+        title: Text(AppText.welcome, style: TextStyle(color: AppColors.textPrimary)),
+    ),
+    body: SingleChildScrollView( // Added this wrapper
+    child: Center(
+    child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 15),
+    child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+    SizedBox(height: AppSizes.md),
+    Image(
+                width: HelperFunctions.screenWidth() * 0.6,
+                height: HelperFunctions.screenHeight() * 0.3,
+                image: AssetImage(AppImage.logo),
+                fit: BoxFit.contain,
+              ),
               Text(
                 AppText.signUp,
                 style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
@@ -127,7 +138,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   void _signUp() async {
