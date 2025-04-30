@@ -4,7 +4,11 @@ import 'package:app_catarsis/utils/services/auth_service/firebase_auth.dart';
 import 'package:app_catarsis/utils/theme/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'blocs/auth/auth_bloc.dart';
+import 'blocs/auth/auth_state.dart';
+import 'blocs/questions/pages/survey_screen.dart';
 import 'modules/authentication/login/pages/login_screen.dart';
 import 'generated/app_localizations.dart';
 import 'modules/onboarding/onboarding.dart';
@@ -23,20 +27,15 @@ class App extends StatelessWidget {
         darkTheme: AppTheme.darkTheme,
         // Mostrar pantalla de de carga circular mientras autentication repository es decide mostrar la pantalla relevante
         // home: const Scaffold(backgroundColor: Colors.blue, body: Center(child: CircularProgressIndicator(color: Colors.white))),
-        home: FutureBuilder<User?>(
-          future: _authService.autoLogin(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            if (snapshot.hasData && snapshot.data != null) {
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthInitial) {
+              return const CircularProgressIndicator();
+            } else if (state is AuthAuthenticated) {
               return HomeScreen();
+            } else {
+              return const OnBoardingScreen();
             }
-
-            return const OnBoardingScreen();
           },
         ),
 
@@ -48,6 +47,7 @@ class App extends StatelessWidget {
 
           '/login': (context) => const LoginPage(),
            '/home': (context) => HomeScreen(),
+          '/survey_mood': (context) => const SurveyScreen(),
         }
     );
   }
