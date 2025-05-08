@@ -32,7 +32,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('¡Gracias por responder!')),
                 );
-                Navigator.of(context).pushReplacementNamed('/home');
+                //Todo: agregar que si le da mas de un clik solo se guarde una vez
+                Navigator.of(context).pushReplacementNamed('/profile_initial');
               }
             },
           ),

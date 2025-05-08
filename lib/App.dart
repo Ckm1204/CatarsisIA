@@ -1,4 +1,5 @@
 import 'package:app_catarsis/blocs/home/pages/home_screen.dart';
+import 'package:app_catarsis/blocs/questions/pages/profile_page.dart';
 import 'package:app_catarsis/utils/conection_red/no_connection_screen.dart';
 import 'package:app_catarsis/utils/services/auth_service/firebase_auth.dart';
 import 'package:app_catarsis/utils/theme/theme.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_state.dart';
+import 'blocs/question_profile/pages/profile_screen.dart';
 import 'blocs/questions/pages/survey_screen.dart';
 import 'modules/authentication/login/pages/login_screen.dart';
 import 'generated/app_localizations.dart';
@@ -48,6 +50,7 @@ class App extends StatelessWidget {
           '/login': (context) => const LoginPage(),
            '/home': (context) => HomeScreen(),
           '/survey_mood': (context) => const SurveyScreen(),
+          '/profile_initial': (context) => const ProfilePage(),
         }
     );
   }

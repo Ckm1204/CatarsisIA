@@ -12,9 +12,15 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final List<Widget> _screens = [
-    const HomeContentScreen(),
-    //const SearchScreen(),
-    //const ProfileScreen(),
+     HomeContentScreen(),
+
+    HomeContentScreen(),
+
+    HomeContentScreen(),
+
+    HomeContentScreen(),
+
+
   ];
 
   @override
