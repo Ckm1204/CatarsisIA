@@ -1,4 +1,6 @@
 // screens/survey_screen.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_catarsis/blocs/questions/bloc/survey_bloc.dart';
@@ -27,13 +29,29 @@ class _SurveyScreenState extends State<SurveyScreen> {
       child: MultiBlocListener(
         listeners: [
           BlocListener<SurveyBloc, SurveyState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is SurveyCompleted) {
+                // Show completion message
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('¡Gracias por responder!')),
                 );
-                //Todo: agregar que si le da mas de un clik solo se guarde una vez
-                Navigator.of(context).pushReplacementNamed('/profile_initial');
+
+                // Check if profile exists
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  final profileDoc = await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user.uid)
+                      .collection('profile')
+                      .doc('data')
+                      .get();
+
+                  if (profileDoc.exists && profileDoc.data()?['profileCompleted'] == true) {
+                    Navigator.of(context).pushReplacementNamed('/home');
+                  } else {
+                    Navigator.of(context).pushReplacementNamed('/profile_initial');
+                  }
+                }
               }
             },
           ),

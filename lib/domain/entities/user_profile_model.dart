@@ -6,7 +6,6 @@ class UserProfile {
   final String socioeconomicLevel;
   final String emotionalSupport;
   final String livingSituation;
-  final String? mentalHealthCondition;
 
   UserProfile({
     required this.birthDate,
@@ -16,7 +15,6 @@ class UserProfile {
     required this.socioeconomicLevel,
     required this.emotionalSupport,
     required this.livingSituation,
-    this.mentalHealthCondition,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,7 +26,6 @@ class UserProfile {
       'socioeconomicLevel': socioeconomicLevel,
       'emotionalSupport': emotionalSupport,
       'livingSituation': livingSituation,
-      'mentalHealthCondition': mentalHealthCondition,
     };
   }
 }
