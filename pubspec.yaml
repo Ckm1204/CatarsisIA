@@ -76,6 +76,7 @@ dependencies:
   flutter_svg: ^2.0.17
   provider: ^6.1.4
   shared_preferences: ^2.5.3
+  fl_chart: ^1.0.0
 
 
 

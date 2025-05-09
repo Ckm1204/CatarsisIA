@@ -1,5 +1,6 @@
 // lib/modules/home/pages/home_screen.dart
 import 'package:app_catarsis/blocs/profile/pages/view_profile_screen.dart';
+import 'package:app_catarsis/blocs/progress/pages/progress_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +18,7 @@ class HomeScreen extends StatelessWidget {
 
     HomeContentScreen(),
 
-    HomeContentScreen(),
+    ProgressPage(),
 
     ViewProfileScreen(),
 
