@@ -1,14 +1,11 @@
 // lib/presentation/pages/progress/progress_page.dart
+import 'package:app_catarsis/blocs/progress/widgets/mood_bar_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../bloc/statisctic_event.dart';
 import '../bloc/statistics_bloc.dart';
-import '../widgets/mood_bar_chart.dart';
 import '../widgets/mood_line_chart.dart';
-
+import '../widgets/questions_average_chart.dart';
 
 class ProgressPage extends StatelessWidget {
   const ProgressPage({super.key});
@@ -28,7 +25,9 @@ class ProgressPage extends StatelessWidget {
               children: [
                 const MoodLineChart(),
                 const SizedBox(height: 24),
-                 MoodBarChart(),
+                const QuestionsAverageChart(),
+                const SizedBox(height: 24),
+                //MoodBarChart(),
               ],
             ),
           ),
