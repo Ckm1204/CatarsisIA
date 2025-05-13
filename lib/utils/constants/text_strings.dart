@@ -60,4 +60,7 @@ static String notFound = AppLocalizations.of(Get.context!).search('notFound');
 static String profileTitle1 = AppLocalizations.of(Get.context!).search('profileTitle1');
 static String dob = AppLocalizations.of(Get.context!).search('dob');
 static String save = AppLocalizations.of(Get.context!).search('save');
+
+// surveyMood
+
 }

@@ -46,7 +46,14 @@ android {
         }
     }
 }
+dependencies {
+    implementation 'com.google.firebase:firebase-firestore:25.1.4'  // O la última versión disponible
+    implementation 'com.google.firebase:firebase-auth:23.2.0'       // Si estás usando autenticación también
+}
+
 
 flutter {
     source = "../.."
 }
+apply plugin: 'com.google.gms.google-services'
+

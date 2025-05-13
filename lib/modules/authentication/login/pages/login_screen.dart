@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
   
       if (user != null) {
         showToast(message: "User is successfully signed in");
-        Get.toNamed('/home');
+        Get.toNamed('/survey_mood');
       }
     } catch (e) {
       showToast(message: "Authentication failed: ${e.toString()}");} finally {
@@ -214,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
           accessToken: googleSignInAuthentication.accessToken,
         );
         await _firebaseAuth.signInWithCredential(credential);
-        Get.toNamed('/home');
+        Get.toNamed('/survey_mood');
       }
     } catch (e) {
       showToast(message: "Google Sign-In failed: ${e.toString()}");
