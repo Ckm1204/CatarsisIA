@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/statisctic_event.dart';
 import '../bloc/statistics_bloc.dart';
+import '../widgets/mood_line.dart';
 import '../widgets/mood_line_chart.dart';
 import '../widgets/questions_average_chart.dart';
 
@@ -23,7 +24,7 @@ class ProgressPage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                const MoodLineChart(),
+                MoodLineChartCard(),
                 const SizedBox(height: 24),
                 const QuestionsAverageChart(),
                 const SizedBox(height: 24),

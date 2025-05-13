@@ -8,6 +8,8 @@ abstract class StatisticsState extends Equatable {
   List<Object> get props => [];
 }
 
+
+
 class StatisticsInitial extends StatisticsState {}
 
 class StatisticsLoading extends StatisticsState {}

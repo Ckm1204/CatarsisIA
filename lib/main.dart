@@ -11,11 +11,14 @@ import 'blocs/auth/auth_event.dart';
 import 'data/repositories/authentication/authentication_repository.dart';
 import 'firebase_options.dart';
 import 'App.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
+  await dotenv.load(fileName: ".env");
 
   /// Todo: Add widgets binding
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

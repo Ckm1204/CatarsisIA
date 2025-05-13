@@ -1,0 +1,127 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
+import '../bloc/statistics_bloc.dart';
+import '../bloc/statistics_state.dart';
+
+
+class MoodLineChartCard extends StatelessWidget {
+  const MoodLineChartCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(16),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: BlocBuilder<StatisticsBloc, StatisticsState>(
+          builder: (context, state) {
+            if (state is StatisticsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is StatisticsError) {
+              return Center(child: Text(state.message));
+            } else if (state is StatisticsLoaded) {
+              final surveys = state.surveys;
+
+              if (surveys.isEmpty) {
+                return const Center(child: Text("No hay datos disponibles"));
+              }
+
+              final spots = <FlSpot>[];
+              final labels = <int, String>{};
+
+              for (var i = 0; i < surveys.length; i++) {
+                final data = surveys[i];
+                final score = (data['score'] as num).toDouble();
+                final timestamp = (data['timestamp'] as Timestamp).toDate();
+
+                spots.add(FlSpot(i.toDouble(), score));
+
+                labels[i] = DateFormat('dd/MM').format(timestamp);
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Estado de ánimo',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  AspectRatio(
+                    aspectRatio: 1.7,
+                    child: LineChart(
+                      LineChartData(
+                        minY: 0,
+                        maxY: 10,
+                        minX: 0,
+                        maxX: spots.length > 1 ? (spots.length - 1).toDouble() : 1,
+                        gridData: FlGridData(show: true),
+                        titlesData: FlTitlesData(
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              interval: 1,
+                              getTitlesWidget: (value, meta) {
+                                final label = labels[value.toInt()] ?? '';
+                                return SideTitleWidget(
+                                  meta: meta,
+                                  space: 6,
+                                  child: Text(
+                                    label,
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              interval: 2,
+                              getTitlesWidget: (value, meta) {
+                                return Text('${value.toInt()}');
+                              },
+                              reservedSize: 28,
+                            ),
+                          ),
+                          topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                        ),
+                        borderData: FlBorderData(show: true),
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: spots,
+                            isCurved: true,
+                            barWidth: 3,
+                            color: Colors.cyan,
+                            belowBarData: BarAreaData(
+                              show: true,
+                              color: Colors.cyan.withOpacity(0.2),
+                            ),
+                            dotData: const FlDotData(show: false),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        ),
+      ),
+    );
+  }
+}

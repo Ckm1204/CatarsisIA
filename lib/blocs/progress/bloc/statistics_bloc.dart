@@ -7,7 +7,7 @@ import 'statistics_state.dart';
 
 class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
   final FirebaseFirestore _firestore;
-  final FirebaseAuth _auth;
+  final FirebaseAuth _auth ;
 
   StatisticsBloc({
     FirebaseFirestore? firestore,
@@ -19,26 +19,62 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
     on<RefreshStatistics>(_onRefreshStatistics);
   }
 
+  Future<List<Map<String, dynamic>>> fetchUserSurveys() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('Usuario no autenticado');
+      }
+
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('surveys_mood')
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => {
+        ...doc.data(),
+        'userId': user.uid,
+        'id': doc.id,
+      })
+          .toList();
+    } catch (e) {
+      throw Exception('Error al cargar los datos: $e');
+    }
+  }
+
+
+
   Future<void> _onLoadStatistics(
-    LoadStatistics event,
-    Emitter<StatisticsState> emit,
-  ) async {
+      LoadStatistics event,
+      Emitter<StatisticsState> emit,
+      ) async {
     try {
       emit(StatisticsLoading());
       final surveys = await _loadSurveys();
-      emit(StatisticsLoaded(surveys));
+      if (surveys.isEmpty) {
+        emit(const StatisticsError('No hay datos disponibles'));
+      } else {
+        emit(StatisticsLoaded(surveys));
+      }
     } catch (e) {
       emit(StatisticsError(e.toString()));
     }
   }
 
   Future<void> _onRefreshStatistics(
-    RefreshStatistics event,
-    Emitter<StatisticsState> emit,
-  ) async {
+      RefreshStatistics event,
+      Emitter<StatisticsState> emit,
+      ) async {
     try {
       final surveys = await _loadSurveys();
-      emit(StatisticsLoaded(surveys));
+      if (surveys.isEmpty) {
+        emit(const StatisticsError('No hay datos disponibles'));
+      } else {
+        emit(StatisticsLoaded(surveys));
+      }
     } catch (e) {
       emit(StatisticsError(e.toString()));
     }
@@ -57,13 +93,15 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
         .orderBy('timestamp', descending: false)
         .get();
 
-    return querySnapshot.docs
-        .map((doc) => {
-              'id': doc.id,
-              'timestamp': doc['timestamp'],
-              'score': doc['score'],
-              ...doc.data(),
-            })
-        .toList();
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      return {
+        'id': doc.id,
+        'userId': user.uid,
+        'timestamp': data['timestamp'],
+        'score': data['score'],
+        'answers': data['answers'],
+      };
+    }).toList();
   }
 }
