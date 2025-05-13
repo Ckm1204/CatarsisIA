@@ -17,7 +17,8 @@ class ViewProfileScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => ViewProfileBloc()..add(LoadProfile()),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Mi Perfil')),
+        appBar: AppBar(  automaticallyImplyLeading: false,
+            title: const Text('Mi Perfil')),
         body: BlocBuilder<ViewProfileBloc, ViewProfileState>(
           builder: (context, state) {
             if (state is ViewProfileLoading) {

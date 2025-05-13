@@ -17,6 +17,7 @@ class ProgressPage extends StatelessWidget {
       create: (context) => StatisticsBloc()..add(LoadStatistics()),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text('Mi Progreso'),
         ),
         body: SingleChildScrollView(

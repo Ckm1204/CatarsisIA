@@ -61,6 +61,7 @@ class _MoodLineChartCardState extends State<MoodLineChartCard> {
                       if (value != null) setState(() => selectedTimeRange = value);
                     },
                   ),
+                  /*
                   DropdownButton<String>(
                     value: selectedQuestion,
                     items: ['Todas', 'Pregunta 1', 'Pregunta 2']
@@ -70,6 +71,7 @@ class _MoodLineChartCardState extends State<MoodLineChartCard> {
                       if (value != null) setState(() => selectedQuestion = value);
                     },
                   ),
+                  */
                 ],
               ),
               const SizedBox(height: 16),
@@ -107,7 +109,7 @@ class _MoodLineChartCardState extends State<MoodLineChartCard> {
     for (var i = 0; i < surveys.length; i++) {
       final data = surveys[i];
       final score = (data['score'] as num).toDouble();
-      final timestamp = (data['timestamp'] as Timestamp).toDate();
+      final timestamp = (data['date'] as DateTime);
 
       spots.add(FlSpot(i.toDouble(), score));
       labels[i] = DateFormat('dd/MM').format(timestamp);
@@ -182,18 +184,65 @@ class _MoodLineChartCardState extends State<MoodLineChartCard> {
 
   List<Map<String, dynamic>> _filterData(List<Map<String, dynamic>> surveys) {
     final now = DateTime.now();
-    return surveys.where((survey) {
-      final date = (survey['timestamp'] as Timestamp).toDate();
+    final startOfToday = DateTime(now.year, now.month, now.day);
+
+    // Agrupar según el filtro
+    final Map<String, List<double>> groupedScores = {};
+
+    for (final survey in surveys) {
+      final timestamp = (survey['timestamp'] as Timestamp).toDate();
+      String key = '';
+
       switch (selectedTimeRange) {
-        case 'Día':
-          return date.isAfter(now.subtract(const Duration(days: 1)));
-        case 'Semana':
-          return date.isAfter(now.subtract(const Duration(days: 7)));
         case 'Mes':
-          return date.isAfter(now.subtract(const Duration(days: 30)));
+          if (timestamp.year == now.year &&
+              timestamp.month == now.month &&
+              timestamp.day == now.day) {
+            key = DateFormat('yyyy-MM-dd').format(timestamp);
+          }
+          break;
+
+        case 'Semana':
+          final startOfWeek = startOfToday.subtract(Duration(days: startOfToday.weekday - 1));
+          final endOfWeek = startOfWeek.add(const Duration(days: 6));
+
+          if (timestamp.isAfter(startOfWeek.subtract(const Duration(seconds: 1))) &&
+              timestamp.isBefore(endOfWeek.add(const Duration(days: 1)))) {
+            // Agrupar por día dentro de la semana
+            key = DateFormat('yyyy-MM-dd').format(timestamp);
+          }
+          break;
+
+        case 'Día':
+          if (timestamp.year == now.year && timestamp.month == now.month) {
+            // Agrupar por día dentro del mes
+            key = DateFormat('yyyy-MM-dd').format(timestamp);
+          }
+          break;
+
         default:
-          return true;
+          key = DateFormat('yyyy-MM-dd').format(timestamp);
       }
+
+      if (key.isNotEmpty) {
+        groupedScores.putIfAbsent(key, () => []);
+        groupedScores[key]!.add((survey['score'] as num).toDouble());
+      }
+    }
+
+    // Convertimos el mapa a lista de mapas con promedio
+    final result = groupedScores.entries.map((entry) {
+      final average = entry.value.reduce((a, b) => a + b) / entry.value.length;
+      return {
+        'date': DateFormat('yyyy-MM-dd').parse(entry.key),
+        'score': average,
+      };
     }).toList();
+
+    // Ordenar por fecha ascendente
+    result.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
+
+    return result;
   }
+
 }
