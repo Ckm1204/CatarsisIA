@@ -1,4 +1,5 @@
 // lib/modules/home/pages/home_screen.dart
+import 'package:app_catarsis/blocs/chat/pages/chat_ia_page.dart';
 import 'package:app_catarsis/blocs/profile/pages/view_profile_screen.dart';
 import 'package:app_catarsis/blocs/progress/pages/progress_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,8 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final List<Widget> _screens = [
-     HomeContentScreen(),
+
+    ChatIAPage(),
 
     HomeContentScreen(),
 
