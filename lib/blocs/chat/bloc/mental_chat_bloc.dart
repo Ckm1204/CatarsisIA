@@ -1,9 +1,10 @@
-// lib/blocs/mental_chat/bloc/mental_chat_bloc.dart
+// lib/blocs/chat/bloc/mental_chat_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../../../domain/entities/chat_message.dart';
 import 'mental_chat_event.dart';
 import 'mental_chat_state.dart';
@@ -11,6 +12,7 @@ import 'mental_chat_state.dart';
 class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
   final FirebaseFirestore _firestore;
   late final GenerativeModel _model;
+  late final SharedPreferences _prefs;
   String? _userId;
   Map<String, dynamic>? _userProfile;
   Map<String, dynamic>? _lastSurvey;
@@ -18,6 +20,7 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
 
   MentalChatBloc(this._firestore) : super(MentalChatInitial()) {
     _initializeGemini();
+    _initializePrefs();
     on<InitializeChat>(_onInitializeChat);
     on<SendMessage>(_onSendMessage);
   }
@@ -28,6 +31,53 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
       model: 'gemini-2.0-flash-lite',
       apiKey: apiKey!,
     );
+  }
+
+  Future<void> _initializePrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    _setupDailyCleanup();
+  }
+
+  void _setupDailyCleanup() {
+    final lastCleanup = _prefs.getString('last_cleanup_date');
+    final now = DateTime.now();
+    final today = now.toIso8601String().split('T')[0];
+
+    if (lastCleanup != today && now.hour >= 4) {
+      _cleanupChat();
+      _prefs.setString('last_cleanup_date', today);
+    }
+  }
+
+  void _cleanupChat() {
+    _prefs.remove('chat_messages');
+    _messages.clear();
+  }
+
+  Future<void> _loadMessages() async {
+    final messagesJson = _prefs.getString('chat_messages_${_userId}');
+    if (messagesJson != null) {
+      final List<dynamic> decoded = json.decode(messagesJson);
+      _messages.clear();
+      _messages.addAll(
+        decoded.map((msg) => ChatMessage(
+          text: msg['text'],
+          isUser: msg['isUser'],
+          timestamp: DateTime.parse(msg['timestamp']),
+        )),
+      );
+    }
+  }
+
+  Future<void> _saveMessages() async {
+    final messagesJson = json.encode(
+      _messages.map((msg) => {
+        'text': msg.text,
+        'isUser': msg.isUser,
+        'timestamp': msg.timestamp.toIso8601String(),
+      }).toList(),
+    );
+    await _prefs.setString('chat_messages_${_userId}', messagesJson);
   }
 
   Future<void> _onInitializeChat(InitializeChat event, Emitter<MentalChatState> emit) async {
@@ -57,13 +107,19 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
         _lastSurvey = surveysQuery.docs.first.data();
       }
 
-      // Add initial bot message
-      final welcomeMessage = _generateWelcomeMessage();
-      _messages.add(ChatMessage(
-        text: welcomeMessage,
-        isUser: false,
-        timestamp: DateTime.now(),
-      ));
+      // Load saved messages
+      await _loadMessages();
+
+      // Add initial bot message if there are no messages
+      if (_messages.isEmpty) {
+        final welcomeMessage = _generateWelcomeMessage();
+        _messages.add(ChatMessage(
+          text: welcomeMessage,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+        await _saveMessages();
+      }
 
       emit(MentalChatReady(_messages, _userProfile!, _lastSurvey!));
     } catch (e) {
@@ -79,17 +135,18 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
         isUser: true,
         timestamp: DateTime.now(),
       ));
+      await _saveMessages();
 
       emit(MentalChatReady(_messages, _userProfile!, _lastSurvey!));
 
       // Generate bot response
       final response = await _generateResponse(event.message);
-
       _messages.add(ChatMessage(
         text: response,
         isUser: false,
         timestamp: DateTime.now(),
       ));
+      await _saveMessages();
 
       emit(MentalChatReady(_messages, _userProfile!, _lastSurvey!));
     } catch (e) {
@@ -100,7 +157,6 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
   String _generateWelcomeMessage() {
     final score = _lastSurvey?['score'] ?? 0;
     final mood = score < 5 ? "preocupado" : "positivo";
-
     return "Hola, soy Catarsis, tu apoyo psicológico por IA. "
            "Según tu última encuesta, noto que tu estado de ánimo está $mood. "
            "¿Cómo puedo ayudarte hoy?";
