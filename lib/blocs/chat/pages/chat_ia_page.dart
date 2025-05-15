@@ -240,8 +240,48 @@ class _ChatBubble extends StatelessWidget {
     required this.isUser,
   });
 
+  List<TextSpan> _parseText(String text, TextStyle baseStyle) {
+    final spans = <TextSpan>[];
+    final regex = RegExp(r'\*\*(.*?)\*\*');
+    int currentPosition = 0;
+
+    for (final match in regex.allMatches(text)) {
+      // Add text before the match
+      if (match.start > currentPosition) {
+        spans.add(TextSpan(
+          text: text.substring(currentPosition, match.start),
+          style: baseStyle,
+        ));
+      }
+
+      // Add bold text
+      spans.add(TextSpan(
+        text: match.group(1),
+        style: baseStyle.copyWith(fontWeight: FontWeight.bold),
+      ));
+
+      currentPosition = match.end;
+    }
+
+    // Add remaining text
+    if (currentPosition < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(currentPosition),
+        style: baseStyle,
+      ));
+    }
+
+    return spans;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final textStyle = TextStyle(
+      color: isUser
+          ? Colors.white
+          : Theme.of(context).colorScheme.onSecondaryContainer,
+    );
+
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -256,12 +296,9 @@ class _ChatBubble extends StatelessWidget {
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
-        child: Text(
-          message,
-          style: TextStyle(
-            color: isUser
-                ? Colors.white
-                : Theme.of(context).colorScheme.onSecondaryContainer,
+        child: RichText(
+          text: TextSpan(
+            children: _parseText(message, textStyle),
           ),
         ),
       ),
