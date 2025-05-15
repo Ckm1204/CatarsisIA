@@ -28,6 +28,9 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
 
+        // ... other configs ...
+        multiDexEnabled true
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -43,7 +46,14 @@ android {
         }
     }
 }
+dependencies {
+    implementation 'com.google.firebase:firebase-firestore:25.1.4'  // O la última versión disponible
+    implementation 'com.google.firebase:firebase-auth:23.2.0'       // Si estás usando autenticación también
+}
+
 
 flutter {
     source = "../.."
 }
+apply plugin: 'com.google.gms.google-services'
+

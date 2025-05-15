@@ -8,6 +8,8 @@ class AppImage {
       "assets/images/on_boarding_images/catarsis_onboarding2.png";
   static const String onBoardingImage3 =
       "assets/images/on_boarding_images/catarsis_onboarding3.png";
+  // Logo
+  static const String logo = "assets/images/logo/logo.png";
 
 
 }
