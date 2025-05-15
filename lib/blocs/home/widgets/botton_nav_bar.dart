@@ -24,12 +24,12 @@ class BottomNavBar extends StatelessWidget {
           label: AppText.home,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.star),
-          label: AppText.search,
+          icon: const Icon(Icons.self_improvement),
+          label: 'Ayuda',
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.data_thresholding_outlined),
-          label: AppText.profile,
+          label: 'Progreso',
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.person),

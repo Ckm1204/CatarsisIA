@@ -45,8 +45,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Perfil inicial')),
-            body: Form(
+            appBar: AppBar(
+              title: const Text('Perfil inicial'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+              ),
+            ),            body: Form(
               key: _formKey,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
