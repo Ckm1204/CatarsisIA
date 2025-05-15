@@ -36,7 +36,7 @@ class _MoodLineChartCardState extends State<MoodLineChartCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Estado de ánimo',
+                    'Estado de ánimo - Timeline',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   IconButton(

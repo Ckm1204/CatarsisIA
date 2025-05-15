@@ -80,6 +80,7 @@ dependencies:
   dotenv: ^4.2.0
   flutter_dotenv: ^5.2.1
   google_generative_ai: ^0.4.7
+  confetti: ^0.8.0
 
 
 

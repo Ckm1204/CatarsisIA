@@ -24,7 +24,7 @@ class BottomNavBar extends StatelessWidget {
           label: AppText.home,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.star),
+          icon: const Icon(Icons.self_improvement),
           label: 'Ayuda',
         ),
         BottomNavigationBarItem(
