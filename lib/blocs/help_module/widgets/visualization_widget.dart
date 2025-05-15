@@ -89,17 +89,21 @@ class _VisualizationWidgetState extends State<VisualizationWidget>
   }
 
   void _nextPhase() {
+    if (!mounted) return;
     if (_currentPhase < _phases.length - 1) {
       setState(() {
         _currentPhase++;
         _eyesClosed = _currentPhase >= 1;
         if (_currentPhase == 3) {
           _showNature = true;
+          if (_fadeController.isAnimating) _fadeController.stop();
           _fadeController.forward();
         }
       });
     } else {
-      _confettiController.play();
+      if (_confettiController.state != ConfettiControllerState.playing) {
+        _confettiController.play();
+      }
     }
   }
 
@@ -115,11 +119,22 @@ class _VisualizationWidgetState extends State<VisualizationWidget>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _pulseController.dispose();
-    _fadeController.dispose();
+    // Stop animations before disposal
+    _pulseController.stop();
+    _fadeController.stop();
     _breathTimer.cancel();
-    _confettiController.dispose();
+    _confettiController.stop();
+
+    // Remove observer first
+    WidgetsBinding.instance.removeObserver(this);
+
+    // Dispose controllers after stopping animations
+    Future.microtask(() {
+      _pulseController.dispose();
+      _fadeController.dispose();
+      _confettiController.dispose();
+    });
+
     super.dispose();
   }
 
@@ -134,6 +149,73 @@ class _VisualizationWidgetState extends State<VisualizationWidget>
             fit: BoxFit.cover,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBreathingAnimation() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.blueAccent.withOpacity(0.3),
+              width: 2,
+            ),
+          ),
+        ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 80),
+          width: 120 * _breathProgress,
+          height: 120 * _breathProgress,
+          constraints: const BoxConstraints(
+            minWidth: 40,
+            minHeight: 40,
+          ),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.blueAccent.withOpacity(0.1),
+            border: Border.all(
+              color: Colors.blueAccent,
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              _isBreathingIn ? "INHALA" : "EXHALA",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEyesClosedIndicator() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.visibility_off, color: Colors.white),
+          SizedBox(width: 10),
+          Text(
+            "Ojos cerrados...",
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
       ),
     );
   }
@@ -219,45 +301,45 @@ class _VisualizationWidgetState extends State<VisualizationWidget>
                         child: Padding(
                           padding: const EdgeInsets.all(25),
                           child: Column(
-                            mainAxisSize: MainAxisSize.min, // Change to min
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ScaleTransition(
                                 scale: _pulseController,
                                 child: Icon(
                                   _phases[_currentPhase]["icon"],
-                                  size: 60, // Reduced from 80
+                                  size: 60,
                                   color: Colors.blueAccent,
                                 ),
                               ),
-                              const SizedBox(height: 20), // Reduced from 30
+                              const SizedBox(height: 20),
                               AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 500),
                                 child: Text(
                                   _phases[_currentPhase]["title"],
                                   key: ValueKey(_currentPhase),
                                   style: const TextStyle(
-                                    fontSize: 24, // Reduced from 26
+                                    fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              const SizedBox(height: 15), // Reduced from 20
-                              Flexible( // Added Flexible
+                              const SizedBox(height: 15),
+                              Flexible(
                                 child: Text(
                                   _phases[_currentPhase]["description"],
                                   style: TextStyle(
-                                    fontSize: 16, // Reduced from 18
+                                    fontSize: 16,
                                     color: Colors.grey.shade700,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              const SizedBox(height: 20), // Reduced from 30
+                              const SizedBox(height: 20),
                               if (_currentPhase == 2)
-                                SizedBox( // Added fixed size
-                                  height: 150, // Reduced from 180
+                                SizedBox(
+                                  height: 150,
                                   child: _buildBreathingAnimation(),
                                 ),
                               if (_eyesClosed)
@@ -280,16 +362,6 @@ class _VisualizationWidgetState extends State<VisualizationWidget>
                       backgroundColor: Colors.white,
                       child: const Icon(Icons.arrow_back, color: Colors.blueAccent),
                     ),
-                    if (_currentPhase == _phases.length - 1)
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.download),
-                        label: const Text('Guardar Sesión'),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Sesión guardada')),
-                          );
-                        },
-                      ),
                     FloatingActionButton(
                       onPressed: _nextPhase,
                       backgroundColor: Colors.blueAccent,
@@ -304,74 +376,6 @@ class _VisualizationWidgetState extends State<VisualizationWidget>
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-Widget _buildBreathingAnimation() {
-  return Stack(
-    alignment: Alignment.center,
-    children: [
-      Container(
-        width: 150, // Reduced from 150
-        height: 150, // Reduced from 150
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.blueAccent.withOpacity(0.3),
-            width: 2,
-          ),
-        ),
-      ),
-      AnimatedContainer(
-        duration: const Duration(milliseconds: 80),
-        width: 120 * _breathProgress, // Reduced from 150
-        height: 120 * _breathProgress, // Reduced from 150
-        constraints: const BoxConstraints(
-          minWidth: 40, // Reduced from 50
-          minHeight: 40, // Reduced from 50
-        ),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.blueAccent.withOpacity(0.1),
-          border: Border.all(
-            color: Colors.blueAccent,
-            width: 2,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            _isBreathingIn ? "INHALA" : "EXHALA",
-            style: const TextStyle(
-              fontSize: 20, // Reduced from 22
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
-
-  Widget _buildEyesClosedIndicator() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.visibility_off, color: Colors.white),
-          SizedBox(width: 10),
-          Text(
-            "Ojos cerrados...",
-            style: TextStyle(color: Colors.white),
           ),
         ],
       ),
