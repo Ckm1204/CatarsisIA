@@ -16,6 +16,10 @@ class GroundingPage extends StatelessWidget {
       create: (_) => GroundingBloc(),
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+          ),
           automaticallyImplyLeading: false,
           title: const Text(
             "Técnicas de Anclaje",
@@ -25,6 +29,7 @@ class GroundingPage extends StatelessWidget {
               color: Colors.white,
             ),
           ),
+
           centerTitle: true,
           flexibleSpace: Container(
             decoration: BoxDecoration(
@@ -40,6 +45,8 @@ class GroundingPage extends StatelessWidget {
           ),
           elevation: 10,
           shadowColor: Colors.blue.shade200,
+
+
         ),
         body: Container(
           decoration: BoxDecoration(
