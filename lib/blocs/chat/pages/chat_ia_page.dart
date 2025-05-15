@@ -13,11 +13,71 @@ class ChatIAPage extends StatefulWidget {
   @override
   State<ChatIAPage> createState() => _ChatIAPageState();
 }
+class _TypingIndicator extends StatefulWidget {
+  const _TypingIndicator({Key? key}) : super(key: key);
+
+  @override
+  State<_TypingIndicator> createState() => _TypingIndicatorState();
+}
+
+class _TypingIndicatorState extends State<_TypingIndicator> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<int> _dots;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    )..repeat();
+
+    _dots = IntTween(begin: 1, end: 3).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _dots,
+      builder: (context, child) {
+        final dotsStr = '.' * _dots.value;
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text('Catarsis está escribiendo$dotsStr'),
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 class _ChatIAPageState extends State<ChatIAPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final User? currentUser = FirebaseAuth.instance.currentUser;
+
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
+  }
 
   @override
   void dispose() {
@@ -27,15 +87,9 @@ class _ChatIAPageState extends State<ChatIAPage> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
   }
 
   void _handleSend(BuildContext context) {
@@ -72,7 +126,12 @@ class _ChatIAPageState extends State<ChatIAPage> {
           body: BlocConsumer<MentalChatBloc, MentalChatState>(
             listener: (context, state) {
               if (state is MentalChatReady) {
-                _scrollToBottom();
+                Future.delayed(const Duration(milliseconds: 1), () {
+                  _scrollToBottom();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _scrollToBottom();
+                });
+                });
               }
             },
             builder: (context, state) {
@@ -84,16 +143,26 @@ class _ChatIAPageState extends State<ChatIAPage> {
                 return Center(child: Text('Error: ${state.message}'));
               }
 
-              if (state is MentalChatReady) {
+
+              if (state is MentalChatTyping || state is MentalChatReady) {
+                final messages = (state is MentalChatTyping)
+                    ? state.messages
+                    : (state as MentalChatReady).messages;
+
+                final isTyping = state is MentalChatTyping;
+
                 return Column(
                   children: [
                     Expanded(
                       child: ListView.builder(
                         controller: _scrollController,
                         padding: const EdgeInsets.all(16),
-                        itemCount: state.messages.length,
+                        itemCount: messages.length + (isTyping ? 1 : 0),
                         itemBuilder: (context, index) {
-                          final message = state.messages[index];
+                          if (isTyping && index == messages.length) {
+                            return const _TypingIndicator();
+                          }
+                          final message = messages[index];
                           return _ChatBubble(
                             message: message.text,
                             isUser: message.isUser,
@@ -105,6 +174,7 @@ class _ChatIAPageState extends State<ChatIAPage> {
                   ],
                 );
               }
+
 
               return const SizedBox.shrink();
             },
@@ -135,6 +205,7 @@ class _ChatIAPageState extends State<ChatIAPage> {
                 controller: _messageController,
                 decoration: InputDecoration(
                   hintText: 'Deshaogate aquí...',
+                  hintStyle: TextStyle(color: Colors.grey[700]),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),

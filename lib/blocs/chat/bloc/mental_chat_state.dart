@@ -11,10 +11,18 @@ abstract class MentalChatState extends Equatable {
 
 class MentalChatInitial extends MentalChatState {}
 class MentalChatLoading extends MentalChatState {}
+class MentalChatTyping extends MentalChatState {
+  final List<ChatMessage> messages;
+  final Map<String, dynamic> profile;
+  final Map<String, dynamic> survey;
+
+  MentalChatTyping(this.messages, this.profile, this.survey);
+}
 class MentalChatReady extends MentalChatState {
   final List<ChatMessage> messages;
   final Map<String, dynamic> userProfile;
   final Map<String, dynamic> lastSurvey;
+
 
   const MentalChatReady(this.messages, this.userProfile, this.lastSurvey);
 

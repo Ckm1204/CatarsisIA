@@ -129,7 +129,6 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
 
   Future<void> _onSendMessage(SendMessage event, Emitter<MentalChatState> emit) async {
     try {
-      // Add user message
       _messages.add(ChatMessage(
         text: event.message,
         isUser: true,
@@ -137,10 +136,13 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
       ));
       await _saveMessages();
 
-      emit(MentalChatReady(_messages, _userProfile!, _lastSurvey!));
+      emit(MentalChatReady(List.from(_messages), _userProfile!, _lastSurvey!));
 
-      // Generate bot response
+      // Emit "typing..." state
+      emit(MentalChatTyping(List.from(_messages), _userProfile!, _lastSurvey!));
+
       final response = await _generateResponse(event.message);
+
       _messages.add(ChatMessage(
         text: response,
         isUser: false,
@@ -148,7 +150,7 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
       ));
       await _saveMessages();
 
-      emit(MentalChatReady(_messages, _userProfile!, _lastSurvey!));
+      emit(MentalChatReady(List.from(_messages), _userProfile!, _lastSurvey!));
     } catch (e) {
       emit(MentalChatError(e.toString()));
     }
@@ -163,10 +165,33 @@ class MentalChatBloc extends Bloc<MentalChatEvent, MentalChatState> {
   }
 
   Future<String> _generateResponse(String userMessage) async {
-    final prompt = "Eres un asistente psicológico empático llamado Catarsis. "
-                  "Perfil del usuario: ${_userProfile.toString()}. "
-                  "Última encuesta de ánimo: ${_lastSurvey.toString()}. "
-                  "Mensaje del usuario: $userMessage";
+    final prompt = '''
+      Eres Catarsis, una inteligencia artificial empática y comprensiva diseñada para brindar acompañamiento emocional y bienestar mental. Tu misión es escuchar activamente, validar emociones y ofrecer orientación amable y útil, sin emitir juicios ni diagnósticos médicos. Eres cálida, paciente y conversas con el usuario como si fuera alguien a quien aprecias.
+      
+      Tu comportamiento debe reflejar:
+      - Empatía genuina: responde de forma comprensiva y reconfortante.
+      - Claridad: explicas ideas con suavidad y sin tecnicismos innecesarios.
+      - Apoyo emocional: ayudas a reflexionar, pero nunca das órdenes.
+      - Lenguaje accesible, humano y cercano, como una conversación tranquila.
+      
+      Adaptas tu respuesta al perfil del usuario:
+      - Si el usuario es joven o estudiante, empleas ejemplos cotidianos o académicos.
+      - Si el usuario expresa angustia o tristeza, priorizas el apoyo emocional.
+      - Si pregunta sobre estrategias, ofreces técnicas de autocuidado, respiración, journaling, etc.
+      - Siempre haces sentir al usuario acompañado.
+      
+      Nunca mencionas que eres un modelo de lenguaje o IA avanzada. Solo te identificas como "Catarsis".
+      
+      Ejemplos de tono:
+      - "Entiendo que eso puede ser difícil. ¿Quieres que lo exploremos juntos?"
+      - "Gracias por confiarme eso. Estoy aquí contigo."
+      
+      Recuerda: no das consejos médicos ni diagnósticos. Deriva con amabilidad al profesional adecuado si es necesario.
+      
+      '''
+        "Perfil del usuario: ${_userProfile.toString()}. "
+        "Última encuesta de ánimo: ${_lastSurvey.toString()}. "
+        "Mensaje del usuario: $userMessage";
 
     final content = [Content.text(prompt)];
     final response = await _model.generateContent(content);
