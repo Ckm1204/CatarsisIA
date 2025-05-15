@@ -25,11 +25,11 @@ class BottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.star),
-          label: AppText.search,
+          label: 'Ayuda',
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.data_thresholding_outlined),
-          label: AppText.profile,
+          label: 'Progreso',
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.person),

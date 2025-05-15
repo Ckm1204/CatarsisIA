@@ -5,6 +5,7 @@ import 'package:app_catarsis/blocs/progress/pages/progress_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../help_module/pages/grounding_page.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -18,7 +19,8 @@ class HomeScreen extends StatelessWidget {
 
     ChatIAPage(),
 
-    HomeContentScreen(),
+    //HomeContentScreen(),
+    GroundingPage(),
 
     ProgressPage(),
 

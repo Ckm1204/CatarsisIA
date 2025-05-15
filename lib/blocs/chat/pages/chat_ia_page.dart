@@ -120,7 +120,8 @@ class _ChatIAPageState extends State<ChatIAPage> {
       child: Builder(
         builder: (context) => Scaffold(
           appBar: AppBar(
-            title: const Text('Catarsis - Apoyo Psicológico'),
+            automaticallyImplyLeading: false,
+            title: const Text('Diario de emociones - Catarsis'),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
           body: BlocConsumer<MentalChatBloc, MentalChatState>(
